@@ -33,11 +33,15 @@ class TriviaTestCase(unittest.TestCase):
         }
 
 
-        self.new_quiz_round = {
+        self.new_quiz = {
              'previous_questions': [],
-             'quiz_category': {'type': 'Art', 'id': 2
+             'quiz_category': {'type': 'Art', 'id': "2"
 
         }}
+        self.new_quiz_error = {
+            'previous_questions': []
+
+        }
         self.new_question_error = {
             'question': 'new_question',
             'answer': 'new_answer',
@@ -184,21 +188,23 @@ class TriviaTestCase(unittest.TestCase):
     def test_quiz_play(self):
     
 
-        res = self.client().post('/quizzes', json=self.new_quiz_round)
+
+        res = self.client().post('/quizzes', json=self.new_quiz)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertTrue(data["question"])
-
-
-    def test_422_play_quiz(self):
-        res = self.client().post('/quizzes')
+   
+    def test_404_play_quiz(self):
+ 
+        res = self.client().post('/quizzes', json=self.new_quiz_error)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "unprocessable")
+
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
