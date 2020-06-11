@@ -203,37 +203,37 @@ def create_app(test_config=None):
     # if provided, and that is not one of the previous questions
 
     @app.route('/quizzes', methods=['POST'])
-    def quiz_play():
-        if request.data:
-            data = json.loads(request.data.decode('utf-8'))
-            if (('quiz_category' in data
-                 and 'id' in data['quiz_category'])
-                    and 'previous_questions' in data):
-                query = Question.query.filter_by(
-                   category=data['quiz_category']['id']
-                ).filter(
-                    Question.id.notin_(data["previous_questions"])
-                ).all()
-                available_question = len(query)
-                if available_question > 0:
-                    result = {
-                        "success": True,
-                        "question": Question.format(
-                            query[random.randrange(
-                                0,
-                                available_question
-                            )]
-                        )
-                    }
-                else:
-                    result = {
-                        "success": True,
-                        "question": None
-                    }
-                return jsonify(result)
-            abort(404)
-        abort(422)
+    def test_quiz_play():
+        body = request.get_json()
+        if not ('quiz_category' in body and 'previous_questions' in body):
+            abort(422)
+        previous_questions = body.get('previous_questions')
+        quiz_category = body.get('quiz_category')
 
+        try:
+            category_id = quiz_category['id']
+            if category_id == 0:
+                selection = Question.query.filter(
+                        Question.id.notin_((previous_questions))).all()
+            else:
+                selection = Question.query.filter(
+                    Question.category == category_id).filter(
+                        Question.id.notin_((previous_questions))).all()
+
+            new_question = random.choice(selection)
+            avilable_question = len(selection)
+            if avilable_question > 0:
+                return jsonify({
+                    "success": True,
+                    "question": new_question.format()
+                })
+            else:
+                return jsonify({
+                    "success": True,
+                    "question": None
+                })
+        except Exception:
+            abort(422)
     # TEST: In the "Play" tab, after a user selects "All" or a category
     # one question at a time is displayed, the user is allowed to answer
     # and shown whether they were correct or not
