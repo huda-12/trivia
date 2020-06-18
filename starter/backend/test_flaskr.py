@@ -70,7 +70,8 @@ class TriviaTestCase(unittest.TestCase):
     # Write at least one test for each test for successful operation and for expected errors.
     # # """
     #_____________________________________________/questions________________
-    def test_get_paginated_questions(self): 
+    def test_get_paginated_questions(self):  # Resource = lesson 3 part (error handling) BOOKSHELF EXAMPLE from UDACITY
+
         res = self.client().get('/questions?page=1')
         data = json.loads(res.data)
 
@@ -82,7 +83,8 @@ class TriviaTestCase(unittest.TestCase):
 
     
   
-    def test_404_sent_requesting_questions_beyond_vaild_page(self): 
+    def test_404_sent_requesting_questions_beyond_vaild_page(self):  # Resource = lesson 3 part (error handling) BOOKSHELF EXAMPLE from UDACITY
+
         res = self.client().get('/questions?page=100') 
         data=json.loads(res.data)
         
@@ -92,7 +94,8 @@ class TriviaTestCase(unittest.TestCase):
 
     #_______________________________________/categories___________________________________
     def test_get_categories(self): 
-        res = self.client().get('/categories')
+        res = self.client().get('/categories')  # Resource = lesson 3 part (error handling) BOOKSHELF EXAMPLE from UDACITY
+
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -108,7 +111,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'resource not found')
 
     #_______________________________________/quethions DELETE___________________________________
-    def test_delete_question(self): 
+    def test_delete_question(self):  
         question = Question(question='new question', answer='new answer',
                             difficulty=1, category=1)
         question.insert()
